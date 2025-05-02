@@ -1,0 +1,6 @@
+torch
+#pytorchvideo is outdated, only works with old versions of torchvision
+# or just see https://github.com/facebookresearch/pytorchvideo/issues/258
+torchvision<=0.16.2
+pytorchvideo
+decord
