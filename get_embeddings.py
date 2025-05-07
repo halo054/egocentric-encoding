@@ -37,6 +37,8 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size=1)
 with torch.no_grad():
     for batch in tqdm(dataloader):
         ego_data, exo_data, take_uid = batch
+        ego_data = torch.squeeze(ego_data)
+        exo_data = torch.squeeze(exo_data)
         ego_embeddings = model({ModalityType.VISION: ego_data})[ModalityType.VISION]
         torch.save(f'embeddings/ego-original/{take_uid}.pt', ego_embeddings)
         exo_embeddings = model({ModalityType.VISION: exo_data})[ModalityType.VISION]

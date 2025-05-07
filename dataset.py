@@ -26,11 +26,11 @@ class EgoExoDataset(Dataset):
     
     def __getitem__(self, idx):
         # return (5 2second ego clips, 5 2second exo clips, take_uid)
-        ego_video_filename = self.data_root_dir + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos']['aria01']['rgb']['relative_path']
+        ego_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos']['aria01']['rgb']['relative_path']
         if self.entries[idx]['best_exo']:
-            exo_video_filename = self.data_root_dir + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos'][self.entries[idx]['best_exo']]['0']['relative_path']
+            exo_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos'][self.entries[idx]['best_exo']]['0']['relative_path']
         else:
-            exo_video_filename = self.data_root_dir + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos']['cam01']['0']['relative_path']
+            exo_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos']['cam01']['0']['relative_path']
         ego_video_data = utils.load_and_transform_video_data([ego_video_filename], self.device, 2, 5)
         exo_video_data = utils.load_and_transform_video_data([exo_video_filename], self.device, 2, 5)
         return (ego_video_data, exo_video_data, self.entries[idx]['take_uid'])

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# from https://github.com/fabawi/ImageBind-LoRA/blob/main/data.py
-# Licensed under https://github.com/fabawi/ImageBind-LoRA/blob/main/LICENSE (Attribution-NonCommercial-ShareAlike 4.0 International)
+# from https://github.com/facebookresearch/ImageBind/blob/main/imagebind/data.py
+# Licensed under https://github.com/facebookresearch/ImageBind/blob/main/LICENSE (Attribution-NonCommercial-ShareAlike 4.0 International)
 # Commented out lines 26, 124-130
 
 # Portions Copyright (c) Meta Platforms, Inc. and affiliates.
