@@ -2,14 +2,14 @@ from dataset import EgoExoDataset
 from tqdm import tqdm
 from pathlib import Path
 
-from imagebind import data
+import data
 import torch
-from imagebind.models import imagebind_model
-from imagebind.models.imagebind_model import ModalityType
+from models import imagebind_model
+from models.imagebind_model import ModalityType
 
-TAKES_FILENAME = 'SET THIS VALUE' # this should be the takes.json file path
-SPLITS_FILENAME = 'SET THIS VALUE' # this should be the splits.json file path
-DATA_ROOT_DIR = 'SET THIS VALUE' # this should be the path to directory containing takes.json
+TAKES_FILENAME = '/fs/vulcan-datasets/Ego-Exo4D/takes.json' # this should be the takes.json file path
+SPLITS_FILENAME = '/fs/vulcan-datasets/Ego-Exo4D/annotations/splits.json' # this should be the splits.json file path
+DATA_ROOT_DIR = '/fs/vulcan-datasets/Ego-Exo4D' # this should be the path to directory containing takes.json
 
 
 def make_directory(directory):
@@ -37,10 +37,12 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size=1)
 with torch.no_grad():
     for batch in tqdm(dataloader):
         ego_data, exo_data, take_uid = batch
-        ego_data = torch.squeeze(ego_data)
-        exo_data = torch.squeeze(exo_data)
+        take_uid = take_uid
+        ego_data = ego_data[0]
+        exo_data = exo_data[0]
+
         ego_embeddings = model({ModalityType.VISION: ego_data})[ModalityType.VISION]
-        torch.save(f'embeddings/ego-original/{take_uid}.pt', ego_embeddings)
+        torch.save(ego_embeddings,f'embeddings/ego-original/{take_uid}.pt')
         exo_embeddings = model({ModalityType.VISION: exo_data})[ModalityType.VISION]
-        torch.save(f'embeddings/exo/{take_uid}.pt', exo_embeddings)
+        torch.save(exo_embeddings,f'embeddings/exo/{take_uid}.pt')
 
