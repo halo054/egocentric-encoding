@@ -45,7 +45,7 @@ with torch.no_grad():
         exo_data = exo_data[0]
 
         ego_embeddings = model({ModalityType.VISION: ego_data})[ModalityType.VISION]
-        torch.save(ego_embeddings,f'embeddings/ego-original/{take_uid[0]}.pt')
+        torch.save(ego_embeddings,f'embeddings/ego-original/{take_uid}.pt')
         exo_embeddings = model({ModalityType.VISION: exo_data})[ModalityType.VISION]
-        torch.save(exo_embeddings,f'embeddings/exo/{take_uid[0]}.pt')
+        torch.save(exo_embeddings,f'embeddings/exo/{take_uid}.pt')
 

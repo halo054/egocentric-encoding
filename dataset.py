@@ -46,7 +46,7 @@ class EgoExoDataset(Dataset):
                 keys.remove('best_exo')
                 exo_keyname = keys[0]
         exo_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos'][exo_keyname]['0']['relative_path']
-        return (ego_video_filename, exo_video_filename, self.entries[idx]['take_uid'])
+        # return (ego_video_filename, exo_video_filename, self.entries[idx]['take_uid'])
         ego_video_data = utils.load_and_transform_video_data([ego_video_filename], self.device, 2, 5)
         exo_video_data = utils.load_and_transform_video_data([exo_video_filename], self.device, 2, 5)
         return (ego_video_data, exo_video_data, self.entries[idx]['take_uid'])
