@@ -31,18 +31,21 @@ model = imagebind_model.imagebind_huge(pretrained=True)
 model.eval()
 model.to(device)
 
-dataset = EgoExoDataset(TAKES_FILENAME, SPLITS_FILENAME, DATA_ROOT_DIR, split='test')
+seen_ego_takes = [f.name.replace('.pt', '') for f in Path('embeddings/ego-original').iterdir() if f.is_file()]
+seen_exo_takes = [f.name.replace('.pt', '') for f in Path('embeddings/exo').iterdir() if f.is_file()]
+seen_takes = [f for f in seen_ego_takes if f in seen_exo_takes]
+dataset = EgoExoDataset(TAKES_FILENAME, SPLITS_FILENAME, DATA_ROOT_DIR, split='test', skip_takes=seen_takes)
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=1)
 
 with torch.no_grad():
     for batch in tqdm(dataloader):
         ego_data, exo_data, take_uid = batch
-        take_uid = take_uid[2:-3]
+        take_uid = take_uid[0]
         ego_data = ego_data[0]
         exo_data = exo_data[0]
 
         ego_embeddings = model({ModalityType.VISION: ego_data})[ModalityType.VISION]
-        torch.save(ego_embeddings,f'embeddings/ego-original/{take_uid}.pt')
+        torch.save(ego_embeddings,f'embeddings/ego-original/{take_uid[0]}.pt')
         exo_embeddings = model({ModalityType.VISION: exo_data})[ModalityType.VISION]
-        torch.save(exo_embeddings,f'embeddings/exo/{take_uid}.pt')
+        torch.save(exo_embeddings,f'embeddings/exo/{take_uid[0]}.pt')
 

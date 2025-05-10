@@ -7,7 +7,7 @@ import utils
 
 class EgoExoDataset(Dataset):
     # split can be one of 'train', 'test', 'val'
-    def __init__(self, takes_filename, splits_filename, data_root_dir, split='train', device='cuda'):
+    def __init__(self, takes_filename, splits_filename, data_root_dir, split='train', device='cuda', skip_takes=[]):
         self.device = device
         self.data_root_dir = data_root_dir
         with open(splits_filename) as splits_file:
@@ -18,7 +18,7 @@ class EgoExoDataset(Dataset):
         with open(takes_filename) as takes_file:
             takes_list = json.load(takes_file)
             for take in takes_list:
-                if take['take_uid'] in split_set:
+                if take['take_uid'] in split_set and take['take_uid'] not in skip_takes:
                     self.entries.append(take)
     
     def __len__(self):
@@ -26,11 +26,27 @@ class EgoExoDataset(Dataset):
     
     def __getitem__(self, idx):
         # return (5 2second ego clips, 5 2second exo clips, take_uid)
-        ego_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos']['aria01']['rgb']['relative_path']
+        keys = self.entries[idx]['frame_aligned_videos'].keys()
+        for key in keys:
+            if 'aria' in key:
+                aria_keyname = key
+                break
+        ego_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos'][aria_keyname]['rgb']['relative_path']
         if self.entries[idx]['best_exo']:
-            exo_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos'][self.entries[idx]['best_exo']]['0']['relative_path']
+            exo_keyname = self.entries[idx]['best_exo']
         else:
-            exo_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos']['cam01']['0']['relative_path']
+            if 'cam01' in self.entries[idx]['frame_aligned_videos']:
+                exo_keyname = 'cam01'
+            elif 'gp01' in self.entries[idx]['frame_aligned_videos']:
+                exo_keyname = 'gp01'
+            else:
+                keys = [key for key in self.entries[idx]['frame_aligned_videos'].keys()]
+                keys.remove('collage')
+                keys.remove(aria_keyname)
+                keys.remove('best_exo')
+                exo_keyname = keys[0]
+        exo_video_filename = self.data_root_dir + "/" + self.entries[idx]['root_dir'] + '/' +  self.entries[idx]['frame_aligned_videos'][exo_keyname]['0']['relative_path']
+        return (ego_video_filename, exo_video_filename, self.entries[idx]['take_uid'])
         ego_video_data = utils.load_and_transform_video_data([ego_video_filename], self.device, 2, 5)
         exo_video_data = utils.load_and_transform_video_data([exo_video_filename], self.device, 2, 5)
         return (ego_video_data, exo_video_data, self.entries[idx]['take_uid'])
