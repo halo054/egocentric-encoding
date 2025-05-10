@@ -37,7 +37,7 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size=1)
 with torch.no_grad():
     for batch in tqdm(dataloader):
         ego_data, exo_data, take_uid = batch
-        take_uid = take_uid
+        take_uid = take_uid[2:-3]
         ego_data = ego_data[0]
         exo_data = exo_data[0]
 
