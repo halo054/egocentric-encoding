@@ -1,6 +1,8 @@
 from torch.utils.data import Dataset
 import json
 import utils
+from pathlib import Path
+import subprocess
 
 # aria01_214-1.mp4 for the centered egocentric
 
@@ -50,4 +52,31 @@ class EgoExoDataset(Dataset):
         ego_video_data = utils.load_and_transform_video_data([ego_video_filename], self.device, 2, 5)
         exo_video_data = utils.load_and_transform_video_data([exo_video_filename], self.device, 2, 5)
         return (ego_video_data, exo_video_data, self.entries[idx]['take_uid'])
+
+class AudioDataset(Dataset):
+    def __init__(self, takes_filename, splits_filename, data_root_dir, split='train', device='cuda', skip_takes=[]):
+        self.device = device
+        self.data_root_dir = data_root_dir
+        with open(splits_filename) as splits_file:
+            splits_map = json.load(splits_file)
+        split_set = set(splits_map["split_to_take_uids"][split])
+        del splits_map
+        self.entries = {}
+        with open(takes_filename) as takes_file:
+            takes_list = json.load(takes_file)
+            for take in takes_list:
+                if take['take_uid'] in split_set and take['take_uid'] not in skip_takes:
+                    self.entries[take['take_uid']] = take
+
+    def __len__(self):
+        return len(self.entries)
+
+    def __getitem__(self, take_uid):
+        # return (5 2second ego clips, 5 2second exo clips, take_uid)
+        entry = self.entries[take_uid]
+        expected_audio_path = f"audio/{take_uid}.wav"
+        if not Path(expected_audio_path).exists():
+            collage_path = self.data_root_dir + '/' + entry['root_dir'] + '/' + entry['frame_aligned_videos']['collage']['0']['relative_path']
+            subprocess.run(['ffmpeg', '-i', collage_path, '-vn', '-ac', '1', expected_audio_path])
+        return utils.load_and_transform_audio_data([expected_audio_path], self.device, clips_per_video=5)
 
