@@ -1,4 +1,4 @@
-<img width="2000" height="2588" alt="image" src="https://github.com/user-attachments/assets/b34ae20f-2977-4dd9-80cf-26217c3417d2" />
+![Modality_Alignment](https://github.com/user-attachments/assets/f831bc08-f087-45e1-a57b-9389f0fa089f)
 
 
 Final_Report.pdf contains the technical report for our ego-exo alignment.
