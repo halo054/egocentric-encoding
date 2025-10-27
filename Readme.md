@@ -1,3 +1,6 @@
+<img width="2000" height="2588" alt="image" src="https://github.com/user-attachments/assets/b34ae20f-2977-4dd9-80cf-26217c3417d2" />
+
+
 Final_Report.pdf contains the technical report for our ego-exo alignment.
 
 Weights can be downloaded at https://drive.google.com/file/d/17D-BIo4xzCRvQCfAuCAFB-vlJ54pQ8DG/view?usp=sharing.
